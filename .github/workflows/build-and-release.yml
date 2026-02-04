@@ -17,6 +17,7 @@ jobs:
 
     env:
       TARGET: ${{ github.ref_name == 'master' && 'production' || 'staging' }}
+      TAG_TARGET: ${{ github.ref_name != 'master' && '-rc' || '' }}
 
     steps:
       - name: Récupération du code
@@ -38,7 +39,7 @@ jobs:
         run: |
           VERSION=$(jq -r '.version' package.json)
           echo "APP_VERSION=$VERSION" >> $GITHUB_ENV
-          echo "RELEASE_TAG=$VERSION-$(date +%y%m%d%H%M%S)${{ github.ref_name != 'master' && '-rc' || '' }}" >> $GITHUB_ENV
+          echo "RELEASE_TAG=$VERSION-$(date +%y%m%d%H%M%S)${{ env.TAG_TARGET }}" >> $GITHUB_ENV
 
       - name: Packaging de l'application
         run: |
@@ -48,7 +49,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.RELEASE_TAG }}
-          name: Release ${{ env.APP_VERSION }}
+          name: ${{ env.APP_VERSION }}${{ env.TAG_TARGET }}
           files: |
             starter-backend-${{ env.APP_VERSION }}.zip
           body: |
