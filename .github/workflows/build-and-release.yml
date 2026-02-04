@@ -1,0 +1,58 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - 'master'
+      - 'releases/rc'
+    tags:
+      - '*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    env:
+      TARGET: ${{ github.ref_name == 'master' && 'production' || 'staging' }}
+
+    steps:
+      - name: Récupération du code
+        uses: actions/checkout@v4
+
+      - name: Installation de NodeJS 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Installation des dépendances
+        run: npm install
+
+      - name: Construction de l'application
+        run: npm run build
+
+      - name: Récupération de la version
+        id: GetVersion
+        run: |
+          VERSION=$(jq -r '.version' package.json)
+          echo "APP_VERSION=$VERSION" >> $GITHUB_ENV
+          echo "RELEASE_TAG=$VERSION-$(date +%y%m%d%H%M%S)${{ github.ref_name == 'master' ? '' : '-rc' }}" >> $GITHUB_ENV
+
+      - name: Packaging de l'application
+        run: |
+          zip -r starter-backend-${{ env.APP_VERSION }}.zip dist node_modules package.json
+
+      - name: Création de la Release et Upload
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: Release ${{ env.APP_VERSION }}
+          files: |
+            starter-backend-${{ env.APP_VERSION }}.zip
+          body: |
+            Livraison automatique du backend.
+            Version : ${{ env.APP_VERSION }}
+            Cible : ${{ env.TARGET }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
