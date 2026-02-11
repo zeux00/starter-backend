@@ -43,7 +43,7 @@ jobs:
 
       - name: Packaging de l'application
         run: |
-          zip -r starter-backend.zip dist node_modules package.json
+          zip -r starter-backend.zip dist node_modules package.json host.json
 
       - name: Création de la Release et Upload
         uses: softprops/action-gh-release@v2

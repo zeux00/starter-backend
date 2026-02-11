@@ -29,7 +29,7 @@
 		"typescript": "5.9.3"
 	},
 	"scripts": {
-		"start": "ts-node src/index.ts",
+		"start": "func start",
 		"dev": "nodemon src/index.ts",
 		"build": "tsc",
 		"serve": "node dist/index.js"
