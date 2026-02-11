@@ -43,7 +43,7 @@ jobs:
 
       - name: Packaging de l'application
         run: |
-          zip -r starter-backend-${{ env.APP_VERSION }}.zip dist node_modules package.json
+          zip -r starter-backend.zip dist node_modules package.json
 
       - name: Création de la Release et Upload
         uses: softprops/action-gh-release@v2
@@ -51,7 +51,7 @@ jobs:
           tag_name: ${{ env.RELEASE_TAG }}
           name: ${{ env.APP_VERSION }}${{ env.TAG_TARGET }}
           files: |
-            starter-backend-${{ env.APP_VERSION }}.zip
+            starter-backend.zip
           body: |
             Livraison automatique du backend.
             Version : ${{ env.APP_VERSION }}
