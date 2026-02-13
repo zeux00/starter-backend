@@ -1,7 +1,7 @@
 {
 	"name": "starter-backend-auth",
-	"private": true,
 	"version": "0.0.2",
+	"main": "dist/functions/gateway.js",
 	"dependencies": {
 		"@azure/functions": "4.11.2",
 		"@inversifyjs/http-core": "4.8.0",
