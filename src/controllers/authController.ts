@@ -1,7 +1,7 @@
-import express from 'express';
-import { ApplyMiddleware,Controller,Get,Request,Response } from '@inversifyjs/http-core';
+import { Controller,Get } from '@inversifyjs/http-core';
+import { type Context as HonoContext } from 'hono';
+import { Context } from '@inversifyjs/http-hono';
 
-import { TYPES } from '../config/types';
 import { logger } from '../utils/logger';
 
 //Création du logger
@@ -21,12 +21,13 @@ export class AuthController {
 	 * Récupération des informations de l'utilisateur authentifié
 	 */
 	@Get('/me')
-	@ApplyMiddleware(TYPES.AuthJwt)
-	public async getInfo(@Request() request: express.Request,@Response() response: express.Response) {
+	public async getInfo(@Context() context: HonoContext): Promise<Response> {
 		//Log
-		log.info(`Récupération des informations de l'utilisateur authentifié : ${(request.user as any)?.sub ?? 'Unauthorized'}`);
+		log.info(`Récupération des informations de l'utilisateur authentifié`);
 
 		//Retour de l'utilisateur connecté
-		response.status(request.isAuthenticated() ? 200 : 401).send(request.isAuthenticated() ? request.user : 'Unauthorized');
+		return context.json({
+			user: context.get('jwtPayload')
+		});
 	}
 }
