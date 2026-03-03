@@ -47,13 +47,18 @@ export class App {
 		//Définition de l'API de base
 		app.basePath('/api');
 
+		//Activation du CORS
+		app.use(cors({
+			origin: '*',
+			allowMethods: ['GET','POST','PUT','DELETE','OPTIONS','HEAD'],
+			allowHeaders: ['Accept','Content-Type','Authorization'],
+			credentials: true
+		}));
+
 		//Gestion de l'authentification par JWT (avec Firebase)
 		app.use('/api/*',jwk({
 			jwks_uri: 'https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com',
 			alg: ['RS256']
 		}));
-
-		//Activation du CORS
-		app.use(cors());
 	}
 }
